@@ -40,7 +40,7 @@ The settings for this node are:
     * by coordinates (lat=xx&lon=xxx)
 
 #### Forecast Days
-	* The number of forecast nodes to create and populate. The range is 0 to 7.
+	* The number of forecast nodes to create and populate. The range is 0 to 5.
 
 #### Elevation
 	* Height above sea level, in meters, for the location specified above. 
