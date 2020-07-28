@@ -109,14 +109,17 @@ class Controller(polyinterface.Controller):
 
     def initialize(self):
         time.sleep(2)  # give things some time to settle
-        self.query_conditions()
-        self.query_forecast()
+        #self.query_conditions()
+        #self.query_forecast()
+        self.query_onecall()
 
     def longPoll(self):
-        self.query_forecast()
+        #self.query_forecast()
+        self.query_onecall()
 
     def shortPoll(self):
-        self.query_conditions()
+        #self.query_conditions()
+        self.query_onecall()
 
     # extra = weather or forecast or uvi
     def get_weather_data(self, extra, lat=None, lon=None):
@@ -124,6 +127,10 @@ class Controller(polyinterface.Controller):
         if 'uvi' in extra:
             request += 'lat=' + str(lat)
             request += '&lon=' + str(lon)
+        elif 'onecall' in extra:
+            request += 'exclude=minutely,hourly'
+            request += '&' + self.params.get('Location')
+            request += '&units=' + self.params.get('Units')
         else:
             # if location looks like a zip code, treat it as such for backwards
             # compatibility
@@ -383,6 +390,39 @@ class Controller(polyinterface.Controller):
                             self.addNotice({'noData': 'Insufficient data for forecast ' + address})
                 else:
                     LOGGER.warning('No forecast information available for day ' + str(f))
+
+    def query_onecall(self, force=False):
+        # Query for the current conditions and daily forecast.
+        # We can do this fairly # frequently, probably as often as once
+        # a minute.
+        #
+        # By default JSON is returned
+        # http://api.openweathermap.org/data/2.5/oncall?
+
+        if not self.configured:
+            LOGGER.info('Skipping connection because we aren\'t configured yet.')
+            return
+
+        try:
+            jdata = self.get_weather_data('onecall')
+
+            if jdata == None:
+                LOGGER.error('Query returned no data')
+                return
+
+            self.latitude = jdata['lat']
+            self.longitude = jdata['lon']
+
+            if 'current' in jdata:
+                LOGGER.error(jdata['current'])
+            
+            if 'daily' in jdata:
+                for day in jdata['daily']:
+                    LOGGER.error('Daily forecast for %d' % day['dt'])
+
+        except:
+            LOGGER.error('Onecall data query failed')
+            return
 
     def query(self):
         LOGGER.info("In Query...")
