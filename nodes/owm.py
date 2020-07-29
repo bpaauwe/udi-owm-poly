@@ -157,57 +157,21 @@ class Controller(polyinterface.Controller):
         return jdata
 
 
-    def query_conditions(self, force=False):
-        # Query for the current conditions. We can do this fairly
-        # frequently, probably as often as once a minute.
-        #
-        # By default JSON is returned
-        # http://api.openweathermap.org/data/2.5/weather?
+    def current_conditions(self, jdata, force=False):
 
-        if not self.configured:
-            LOGGER.info('Skipping connection because we aren\'t configured yet.')
-            return
-
-        try:
-            jdata = self.get_weather_data('weather')
-
-            if jdata == None:
-                LOGGER.error('Query returned no data')
-                return
-
-            self.latitude = jdata['coord']['lat']
-            self.longitude = jdata['coord']['lon']
-
-            try:
-                uv_data = self.get_weather_data('uvi', self.latitude, self.longitude)
-                if uv_data != None:
-                    LOGGER.debug('UV index = %f' % uv_data['value'])
-                    self.update_driver('UV', uv_data['value'], force)
-                else:
-                    LOGGER.error('UV query returned no data')
-            except:
-                LOGGER.error('Failed to query for UV data')
-
-
-            # TODO: Query for pollution data
-        except:
-            LOGGER.error('Weather data query failed')
-            return
 
         # Assume we always get the main section with data
-        self.update_driver('CLITEMP', jdata['main']['temp'], force)
-        self.update_driver('CLIHUM', jdata['main']['humidity'], force)
-        self.update_driver('BARPRES', jdata['main']['pressure'], force)
-        self.update_driver('GV0', jdata['main']['temp_max'], force)
-        self.update_driver('GV1', jdata['main']['temp_min'], force)
-        if 'wind' in jdata:
-            # Wind data is apparently flaky so check to make sure it exist.
-            if 'speed' in jdata['wind']:
-                self.update_driver('GV4', jdata['wind']['speed'], force)
-            if 'gust' in jdata['wind']:
-                self.update_driver('GV5', jdata['wind']['gust'], force)
-            if 'deg' in jdata['wind']:
-                self.update_driver('WINDDIR', jdata['wind']['deg'], force)
+        self.update_driver('CLITEMP', jdata['temp'], force)
+        self.update_driver('CLIHUM', jdata['humidity'], force)
+        self.update_driver('BARPRES', jdata['pressure'], force)
+        self.update_driver('DEWPT', jdata['dew_point'], force)
+        #self.update_driver('GVx', jdata['feels_like'], force)
+        #self.update_driver('GV0', jdata['main']['temp_max'], force)
+        #self.update_driver('GV1', jdata['main']['temp_min'], force)
+        self.update_driver('UV', jdata['uvi'], force)
+        self.update_driver('GV4', jdata['wind_speed'], force)
+        self.update_driver('WINDDIR', jdata['wind_deg'], force)
+        self.update_driver('GV5', jdata['wind_gust'], force)
         if 'visibility' in jdata:
             # always reported in meters convert to either km or miles
             if self.params.get('Units') == 'metric':
@@ -223,7 +187,7 @@ class Controller(polyinterface.Controller):
         self.update_driver('GV7', round(snow, 2), force)
 
         if 'clouds' in jdata:
-            self.update_driver('GV14', jdata['clouds']['all'], force)
+            self.update_driver('GV14', jdata['clouds'], force)
         if 'weather' in jdata:
             self.update_driver('GV13', jdata['weather'][0]['id'], force)
         
@@ -247,149 +211,63 @@ class Controller(polyinterface.Controller):
 
         return snow
 
-    def query_forecast(self):
+    def query_forecast(self, jdata):
         # Three hour forecast for 5 days (or about 30 entries). This
         # is probably too much data to send to the ISY and there isn't
         # really a good way to deal with this. Would it make sense
         # to pick one of the entries for the day and just use that?
 
-        if not self.configured:
-            LOGGER.info('Skipping connection because we aren\'t configured yet.')
-            return
-
-        try:
-            jdata = self.get_weather_data('forecast')
-
-            if jdata == None:
-                LOGGER.error('Query returned no data')
-                return
-
-            uv_data = self.get_weather_data('uvi/forecast', self.latitude, self.longitude)
-            LOGGER.info('Found ' + str(len(uv_data)) + ' UV forecasts')
-            # what if we have no UV data?  below we assume it's there and
-            # crash if it's not.
-        except:
-            LOGGER.error('Foreast query failed.')
-            return
 
         # Free accounts only give us a 3hr/5day forecast so the first step
         # is to map into days with min/max values.
         fcast = []
-        LOGGER.info('Forecast has ' + str(jdata['cnt']) + ' lines of data')
         day = 0
-        fcast.append({})
-        count = 0
-        temp_max = 0
-        temp_min = 200
-        Hmax = 0
-        Hmin = 100
-        pressure = 0
-        weather = 0
-        speed = 0
-        winddir = 0
-        clouds = 0
-        dt = 0
-        uv = 0
-        rain = 0
-        snow = 0
-        dow = -1
 
-        if 'list' in jdata:
-            for forecast in jdata['list']:
-                dt_txt = forecast['dt_txt'].split(' ')
-                LOGGER.info('Day = ' + str(day) + ' - Forecast dt = ' + str(forecast['dt']) + ' ' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(forecast['dt'])))
-                # Forecast may optionally have rain or snow data. Should
-                # parse that.
-                rain = self.parse_precipitation(forecast, 'rain')
-                snow = self.parse_precipitation(forecast, 'snow')
+        for forecast in jdata:
+            LOGGER.info('Day = ' + str(day) + ' - Forecast dt = ' + str(forecast['dt']) + ' ' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(forecast['dt'])))
+            # Forecast may optionally have rain or snow data. Should
+            # parse that.
+            if 'rain' in forecast:
+                rain = jdata['rain']  # in mm only?
+            if 'snow' in forecast:
+                snow = jdata['rain']  # in mm only?
 
-                # We should convert 'dt' to local time and use that to determine day breaks.
-                hour = time.strftime('%H', time.localtime(forecast['dt']))
-                LOGGER.info('day = ' + str(dow) + ' hour = ' + hour)
+            fcast.append({})
+            # TODO: add gust, visibility, pop
+            fcast[day] = {
+                    'temp_max': forecast['temp']['max'],
+                    'temp_min': forecast['temp']['min'],
+                    'Hmax': forecast['humidity'],
+                    'Hmin': forecast['humidity'],
+                    'pressure': forecast['pressure'],
+                    'weather': forecast['weather']['id'],
+                    'speed': forecast['wind_speed'],
+                    'gust': forecast['wind_gust'],
+                    'winddir': forecast['wind_deg'],
+                    'clouds': forecast['clouds'],
+                    'dt': forecast['dt'],
+                    'uv': forecast['uvi'],
+                    'rain': rain,
+                    'snow': snow,
+                    'visibility': forecast['visibility'],
+                    'pop': forecast['pop'],
+                    'count': 1,
+                    }
+            day += 1
 
-                if dow != time.strftime("%w", time.localtime(forecast['dt'])):
-                    if count != 0:
-                        fcast.append({})
-                        fcast[day] = {
-                            'temp_max': temp_max,
-                            'temp_min': temp_min,
-                            'Hmax': Hmax,
-                            'Hmin': Hmin,
-                            'pressure': pressure / count,
-                            'weather': weather,
-                            'speed': speed / count,
-                            'winddir': winddir / count,
-                            'clouds': clouds / count,
-                            'dt': dt,
-                            'uv': uv,
-                            'rain': rain,
-                            'snow': snow,
-                            'count': count,
-                            }
-                        day += 1
+        LOGGER.info('Created ' + str(day) +' days forecast.')
 
-                    temp_max = 0
-                    temp_min = 200
-                    Hmax = 0
-                    Hmin = 100
-                    pressure = 0
-                    weather = 0
-                    speed = 0
-                    winddir = 0
-                    clouds = 0
-                    dt = 0
-                    uv = 0
-                    rain = 0
-                    snow = 0
-                    count = 0
-                    dow = time.strftime("%w", time.localtime(forecast['dt']))
+        try:
+            self.removeNotice('noData')
+        except Exception as e:
+            LOGGER.error(e)
 
-                if 0 <= day < len(uv_data):
-                    uv = float(uv_data[day]['value'])
-                else:
-                    uv = 0.0
-
-                # Build daily forecast data
-                if float(forecast['main']['temp']) > temp_max:
-                    temp_max = float(forecast['main']['temp'])
-                if float(forecast['main']['temp']) < temp_min:
-                    temp_min = float(forecast['main']['temp'])
-                if float(forecast['main']['humidity']) > Hmax:
-                    Hmax = float(forecast['main']['humidity'])
-                if float(forecast['main']['humidity']) < Hmin:
-                    Hmin = float(forecast['main']['humidity'])
-                pressure += float(forecast['main']['pressure'])
-                weather = float(forecast['weather'][0]['id'])
-                speed += float(forecast['wind']['speed'])
-                winddir += float(forecast['wind']['deg'])
-                clouds += float(forecast['clouds']['all'])
-                dt = forecast['dt']
-                uv = uv
-                rain += rain
-                snow += snow
-                count += 1
-
-                
-            LOGGER.info('Created ' + str(day) +' days forecast.')
-
-            try:
-                self.removeNotice('noData')
-            except Exception as e:
-                LOGGER.error(e)
-
-            for f in range(0,int(self.params.get('Forecast Days'))):
-                address = 'forecast_' + str(f)
-                if f < len(fcast) and fcast[f] != {}:
-                    if fcast[f]['count'] == 8:
-                        self.nodes[address].update_forecast(fcast[f], self.latitude, self.params.get('Elevation'), self.params.get('Plant Type'), self.params.get('Units'))
-                    else:
-                        LOGGER.debug('Skipping update for ' + address + ' because it lacks 8 records.')
-                        try:
-                            self.addNotice('Insufficient data for forecast ' + address, 'noData')
-                        except:
-                            self.addNotice({'noData': 'Insufficient data for forecast ' + address})
-                else:
-                    LOGGER.warning('No forecast information available for day ' + str(f))
+        for f in range(0,int(self.params.get('Forecast Days'))):
+            address = 'forecast_' + str(f)
+            if f < len(fcast) and fcast[f] != {}:
+                self.nodes[address].update_forecast(fcast[f], self.latitude, self.params.get('Elevation'), self.params.get('Plant Type'), self.params.get('Units'))
+            else:
+                LOGGER.warning('No forecast information available for day ' + str(f))
 
     def query_onecall(self, force=False):
         # Query for the current conditions and daily forecast.
@@ -414,11 +292,10 @@ class Controller(polyinterface.Controller):
             self.longitude = jdata['lon']
 
             if 'current' in jdata:
-                LOGGER.error(jdata['current'])
+                self.current_conditions(jdata['current'], force)
             
             if 'daily' in jdata:
-                for day in jdata['daily']:
-                    LOGGER.error('Daily forecast for %d' % day['dt'])
+                self.query_forecast(jdata['daily'])
 
         except:
             LOGGER.error('Onecall data query failed')
