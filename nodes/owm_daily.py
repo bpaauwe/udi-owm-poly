@@ -68,19 +68,23 @@ class DailyNode(polyinterface.Node):
         dow = time.strftime("%w", time.localtime(epoch))
         LOGGER.info('Day of week = ' + dow)
 
-        humidity = (forecast['Hmin'] + forecast['Hmax']) / 2
-        self.update_driver('CLIHUM', round(humidity, 0))
-        self.update_driver('BARPRES', round(forecast['pressure'], 1))
-        self.update_driver('GV0', round(forecast['temp_max'], 1))
-        self.update_driver('GV1', round(forecast['temp_min'], 1))
-        self.update_driver('GV14', round(forecast['clouds'], 0))
-        self.update_driver('GV4', round(forecast['speed'], 1))
+        try:
+            humidity = (forecast['Hmin'] + forecast['Hmax']) / 2
+            self.update_driver('CLIHUM', round(humidity, 0))
+            self.update_driver('BARPRES', round(forecast['pressure'], 1))
+            self.update_driver('GV0', round(forecast['temp_max'], 1))
+            self.update_driver('GV1', round(forecast['temp_min'], 1))
+            self.update_driver('GV14', round(forecast['clouds'], 0))
+            self.update_driver('GV4', round(forecast['speed'], 1))
 
-        self.update_driver('GV19', int(dow))
-        self.update_driver('GV13', forecast['weather'])
-        self.update_driver('UV', round(forecast['uv'], 1))
-        self.update_driver('GV6', round(forecast['rain'], 2))
-        self.update_driver('GV7', round(forecast['snow'], 2))
+            self.update_driver('GV19', int(dow))
+            self.update_driver('GV13', forecast['weather'])
+            self.update_driver('UV', round(forecast['uv'], 1))
+            self.update_driver('GV6', round(forecast['rain'], 2))
+            self.update_driver('GV7', round(forecast['snow'], 2))
+        except exception as e:
+            LOGGER.error('Forecast node update failed:')
+            LOGGER.error(str(e))
 
         # Calculate ETo
         #  Temp is in degree C and windspeed is in m/s, we may need to

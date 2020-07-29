@@ -159,19 +159,26 @@ class Controller(polyinterface.Controller):
 
     def current_conditions(self, jdata, force=False):
 
-
         # Assume we always get the main section with data
-        self.update_driver('CLITEMP', jdata['temp'], force)
-        self.update_driver('CLIHUM', jdata['humidity'], force)
-        self.update_driver('BARPRES', jdata['pressure'], force)
-        self.update_driver('DEWPT', jdata['dew_point'], force)
+        if 'temp' in jdata:
+            self.update_driver('CLITEMP', jdata['temp'], force)
+        if 'humidity' in jdata:
+            self.update_driver('CLIHUM', jdata['humidity'], force)
+        if 'pressure' in jdata:
+            self.update_driver('BARPRES', jdata['pressure'], force)
+        if 'dew_point' in jdata:
+            self.update_driver('DEWPT', jdata['dew_point'], force)
         #self.update_driver('GVx', jdata['feels_like'], force)
         #self.update_driver('GV0', jdata['main']['temp_max'], force)
         #self.update_driver('GV1', jdata['main']['temp_min'], force)
-        self.update_driver('UV', jdata['uvi'], force)
-        self.update_driver('GV4', jdata['wind_speed'], force)
-        self.update_driver('WINDDIR', jdata['wind_deg'], force)
-        self.update_driver('GV5', jdata['wind_gust'], force)
+        if 'uvi' in jdata:
+            self.update_driver('UV', jdata['uvi'], force)
+        if 'wind_speed' in jdata:
+            self.update_driver('GV4', jdata['wind_speed'], force)
+        if 'wind_deg' in jdata:
+            self.update_driver('WINDDIR', jdata['wind_deg'], force)
+        if 'wind_gust' in jdata:
+            self.update_driver('GV5', jdata['wind_gust'], force)
         if 'visibility' in jdata:
             # always reported in meters convert to either km or miles
             if self.params.get('Units') == 'metric':
@@ -222,37 +229,59 @@ class Controller(polyinterface.Controller):
         # is to map into days with min/max values.
         fcast = []
         day = 0
+        rain = 0
+        snow = 0
 
         for forecast in jdata:
             LOGGER.info('Day = ' + str(day) + ' - Forecast dt = ' + str(forecast['dt']) + ' ' + time.strftime('%Y-%m-%d %H:%M:%S', time.localtime(forecast['dt'])))
             # Forecast may optionally have rain or snow data. Should
             # parse that.
-            if 'rain' in forecast:
-                rain = jdata['rain']  # in mm only?
-            if 'snow' in forecast:
-                snow = jdata['rain']  # in mm only?
+            try:
+                if 'rain' in forecast:
+                    rain = jdata['rain']  # in mm only?
+                if 'snow' in forecast:
+                    snow = jdata['rain']  # in mm only?
+            except Exception as e:
+                LOGGER.error('Failed to parse forecasted rain/snow data.')
+                LOGGER.error(str(e))
 
             fcast.append({})
-            # TODO: add gust, visibility, pop
-            fcast[day] = {
-                    'temp_max': forecast['temp']['max'],
-                    'temp_min': forecast['temp']['min'],
-                    'Hmax': forecast['humidity'],
-                    'Hmin': forecast['humidity'],
-                    'pressure': forecast['pressure'],
-                    'weather': forecast['weather']['id'],
-                    'speed': forecast['wind_speed'],
-                    'gust': forecast['wind_gust'],
-                    'winddir': forecast['wind_deg'],
-                    'clouds': forecast['clouds'],
-                    'dt': forecast['dt'],
-                    'uv': forecast['uvi'],
-                    'rain': rain,
-                    'snow': snow,
-                    'visibility': forecast['visibility'],
-                    'pop': forecast['pop'],
-                    'count': 1,
-                    }
+            try: 
+                if 'max' in forecast['temp']:
+                    fcast[day]['temp_max'] = forecast['temp']['max']
+                if 'min' in forecast['temp']:
+                    fcast[day]['temp_min'] = forecast['temp']['min']
+                if 'humidity' in forecast:
+                    fcast[day]['Hmax'] = forecast['humidity']
+                    fcast[day]['Hmin'] = forecast['humidity']
+                if 'pressure' in forecast:
+                    fcast[day]['pressure'] = forecast['pressure']
+                if 'weather' in forecast:
+                    fcast[day]['weather'] = forecast['weather'][0]['id']
+                if 'wind_speed' in forecast:
+                    fcast[day]['speed'] = forecast['wind_speed']
+                if 'wind_gust' in forecast:
+                    fcast[day]['gust'] = forecast['wind_gust']
+                if 'wind_deg' in forecast:
+                    fcast[day]['winddir'] = forecast['wind_deg']
+                if 'clouds' in forecast:
+                    fcast[day]['clouds'] = forecast['clouds']
+                if 'dt' in forecast:
+                    fcast[day]['dt'] = forecast['dt']
+                if 'uvi' in forecast:
+                    fcast[day]['uv'] = forecast['uvi']
+                if 'visibility' in forecast:
+                    fcast[day]['visibility'] = forecast['visibility']
+                if 'pop' in forecast:
+                    fcast[day]['pop'] = forecast['pop']
+                fcast[day]['rain'] = rain
+                fcast[day]['snow'] = snow
+                fcast[day]['count'] = 1
+            except Exception as e:
+                LOGGER.error('Failed to parse forecast data.')
+                LOGGER.error(str(e))
+                LOGGER.error(forecast)
+
             day += 1
 
         LOGGER.info('Created ' + str(day) +' days forecast.')
