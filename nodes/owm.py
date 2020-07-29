@@ -109,16 +109,12 @@ class Controller(polyinterface.Controller):
 
     def initialize(self):
         time.sleep(2)  # give things some time to settle
-        #self.query_conditions()
-        #self.query_forecast()
-        self.query_onecall()
+        self.query_onecall(True)
 
     def longPoll(self):
-        #self.query_forecast()
-        self.query_onecall()
+        pass
 
     def shortPoll(self):
-        #self.query_conditions()
         self.query_onecall()
 
     # extra = weather or forecast or uvi
@@ -218,7 +214,7 @@ class Controller(polyinterface.Controller):
 
         return snow
 
-    def query_forecast(self, jdata):
+    def query_forecast(self, jdata, force=False):
         # Three hour forecast for 5 days (or about 30 entries). This
         # is probably too much data to send to the ISY and there isn't
         # really a good way to deal with this. Would it make sense
@@ -294,7 +290,7 @@ class Controller(polyinterface.Controller):
         for f in range(0,int(self.params.get('Forecast Days'))):
             address = 'forecast_' + str(f)
             if f < len(fcast) and fcast[f] != {}:
-                self.nodes[address].update_forecast(fcast[f], self.latitude, self.params.get('Elevation'), self.params.get('Plant Type'), self.params.get('Units'))
+                self.nodes[address].update_forecast(fcast[f], self.latitude, self.params.get('Elevation'), self.params.get('Plant Type'), self.params.get('Units'), force)
             else:
                 LOGGER.warning('No forecast information available for day ' + str(f))
 
@@ -324,7 +320,7 @@ class Controller(polyinterface.Controller):
                 self.current_conditions(jdata['current'], force)
             
             if 'daily' in jdata:
-                self.query_forecast(jdata['daily'])
+                self.query_forecast(jdata['daily'], force)
 
         except:
             LOGGER.error('Onecall data query failed')
