@@ -23,9 +23,9 @@ MIT license.
 The settings for this node are:
 
 #### Short Poll
-   * Not used
-#### Long Poll
    * How often to poll the OpenWeatherMap weather service. Note that the data is only updated every 10 minutes. Setting this to less may result in exceeding the free service rate limit.
+#### Long Poll
+   * not used
 
 #### APIkey   
 	* Your API ID, needed to authorize connection to the OpenWeatherMap API.
@@ -34,13 +34,10 @@ The settings for this node are:
 	* 'metric' or 'imperial' request data in this units format.
 
 #### Location
-    * by zip code (zip=xxxxxxx[,country code])
-    * by city name (q=city name[,country code])
-    * by city id (id=city id)
     * by coordinates (lat=xx&lon=xxx)
 
 #### Forecast Days
-	* The number of forecast nodes to create and populate. The range is 0 to 7.
+	* The number of forecast nodes to create and populate. The range is 0 to 8.
 
 #### Elevation
 	* Height above sea level, in meters, for the location specified above. 
@@ -56,27 +53,31 @@ The settings for this node are:
  * sys.node.[address].BARPRES (current barometric pressure)
  * sys.node.[address].WINDDIR (current wind direction )
  * sys.node.[address].DISTANC (current visibility)
+ * sys.node.[address].DEWPT   (current dew point temperature)
  * sys.node.[address].UV      (current UV index)
- * sys.node.[address].GV0     (current high temperature)
- * sys.node.[address].GV1     (current low temperature)
+ * sys.node.[address].GV2     (current feels like temperature)
  * sys.node.[address].GV4     (current wind speed)
- * sys.node.[address].GV6     (current rain today)
- * sys.node.[address].GV7     (current snow today)
+ * sys.node.[address].GV6     (current rain rate)
+ * sys.node.[address].GV7     (current snow rate)
  * sys.node.[address].GV13    (current conditions)
  * sys.node.[address].GV14    (current percent cloud coverage)
+ * sys.node.[address].GV18    (current percent chance of precipitation)
 
  ### Forecast node
  * sys.node.[address].CLIHUM  (forecasted humidity)
  * sys.node.[address].BARPRES (forecasted barometric pressure)
+ * sys.node.[address].DEWPT   (forecasted dew point temperature)
  * sys.node.[address].UV      (forecasted max UV index)
  * sys.node.[address].GV19    (day of week forecast is for)
  * sys.node.[address].GV0     (forecasted high temperature)
  * sys.node.[address].GV1     (forecasted low temperature)
+ * sys.node.[address].GV2     (forecasted daytime feels like temperature)
  * sys.node.[address].GV13    (forecasted conditions)
  * sys.node.[address].GV14    (forecasted percent cloud coverage)
  * sys.node.[address].GV4     (forecasted wind speed)
  * sys.node.[address].GV6     (forecasted rain)
  * sys.node.[address].GV7     (forecasted snow)
+ * sys.node.[address].GV18    (forecasted percent chance of precipitation)
  * sys.node.[address].GV20    (calculated ETo for the day)
 
 ## Requirements
@@ -101,6 +102,9 @@ The nodeserver keeps track of the version number and when a profile rebuild is n
 
 # Release Notes
 
+- 3.0.0 07/30/2020
+   - Replaced API calls with new OpenWeatherMap OnCall API call.
+     This provides better daily forecast data.
 - 2.0.3 06/10/2020
    - Add inches/day to the ET node value
 - 2.0.2 03/17/2020
