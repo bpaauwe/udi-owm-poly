@@ -26,6 +26,7 @@ class DailyNode(polyinterface.Node):
         self.drivers.append({'driver': 'GV19', 'value': 0, 'uom': self.uom['GV19']})
         self.drivers.append({'driver': 'GV0', 'value': 0, 'uom': self.uom['GV0']})
         self.drivers.append({'driver': 'GV1', 'value': 0, 'uom': self.uom['GV1']})
+        self.drivers.append({'driver': 'GV2', 'value': 0, 'uom': self.uom['GV2']})
         self.drivers.append({'driver': 'CLIHUM', 'value': 0, 'uom': self.uom['CLIHUM']})
         self.drivers.append({'driver': 'BARPRES', 'value': 0, 'uom': self.uom['BARPRES']})
         self.drivers.append({'driver': 'GV13', 'value': 0, 'uom': self.uom['GV13']})
@@ -34,6 +35,7 @@ class DailyNode(polyinterface.Node):
         self.drivers.append({'driver': 'GV7', 'value': 0, 'uom': self.uom['GV7']})
         self.drivers.append({'driver': 'GV4', 'value': 0, 'uom': self.uom['GV4']})
         self.drivers.append({'driver': 'UV', 'value': 0, 'uom': self.uom['UV']})
+        self.drivers.append({'driver': 'GV18', 'value': 0, 'uom': self.uom['GV18']})
         self.drivers.append({'driver': 'GV20', 'value': 0, 'uom': self.uom['GV20']})
 
         # call the default init
@@ -43,6 +45,7 @@ class DailyNode(polyinterface.Node):
     uom = {'GV19': 25,
             'GV0': 4,
             'GV1': 4,
+            'GV2': 4,
             'CLIHUM': 22,
             'BARPRES': 118,
             'GV13': 25,
@@ -52,6 +55,7 @@ class DailyNode(polyinterface.Node):
             'GV20': 107,
             'GV6': 82,
             'GV7': 82,
+            'GV18': 22,
             }
 
     def set_driver_uom(self, units):
@@ -74,6 +78,7 @@ class DailyNode(polyinterface.Node):
             self.update_driver('BARPRES', round(forecast['pressure'], 1), f)
             self.update_driver('GV0', round(forecast['temp_max'], 1), f)
             self.update_driver('GV1', round(forecast['temp_min'], 1), f)
+            self.update_driver('GV2', round(forecast['feelslike'], 1), f)
             self.update_driver('GV14', round(forecast['clouds'], 0), f)
             self.update_driver('GV4', round(forecast['speed'], 1), f)
 
@@ -82,6 +87,7 @@ class DailyNode(polyinterface.Node):
             self.update_driver('UV', round(forecast['uv'], 1), f)
             self.update_driver('GV6', round(forecast['rain'], 2), f)
             self.update_driver('GV7', round(forecast['snow'], 2), f)
+            self.update_driver('GV18', round(forecast['pop'], 0), f)
         except exception as e:
             LOGGER.error('Forecast node update failed:')
             LOGGER.error(str(e))

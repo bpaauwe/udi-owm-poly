@@ -164,9 +164,10 @@ class Controller(polyinterface.Controller):
             self.update_driver('BARPRES', jdata['pressure'], force)
         if 'dew_point' in jdata:
             self.update_driver('DEWPT', jdata['dew_point'], force)
-        #self.update_driver('GVx', jdata['feels_like'], force)
-        #self.update_driver('GV0', jdata['main']['temp_max'], force)
-        #self.update_driver('GV1', jdata['main']['temp_min'], force)
+        if 'feels_like' in jdata:
+            self.update_driver('GV2', jdata['feels_like'], force)
+        if 'pop' in jdata:
+            self.update_driver('GV18', jdata['pop'], force)
         if 'uvi' in jdata:
             self.update_driver('UV', jdata['uvi'], force)
         if 'wind_speed' in jdata:
@@ -270,6 +271,8 @@ class Controller(polyinterface.Controller):
                     fcast[day]['visibility'] = forecast['visibility']
                 if 'pop' in forecast:
                     fcast[day]['pop'] = forecast['pop']
+                if 'feels_like' in forecast:
+                    fcast[day]['feelslike'] = forecast['feels_like']['day']
                 fcast[day]['rain'] = rain
                 fcast[day]['snow'] = snow
                 fcast[day]['count'] = 1
@@ -433,8 +436,7 @@ class Controller(polyinterface.Controller):
             {'driver': 'CLIHUM', 'value': 0, 'uom': 22},   # humidity
             {'driver': 'BARPRES', 'value': 0, 'uom': 118}, # pressure
             {'driver': 'WINDDIR', 'value': 0, 'uom': 76},  # direction
-            {'driver': 'GV0', 'value': 0, 'uom': 4},       # max temp
-            {'driver': 'GV1', 'value': 0, 'uom': 4},       # min temp
+            {'driver': 'GV2', 'value': 0, 'uom': 4},       # feels like
             {'driver': 'GV4', 'value': 0, 'uom': 49},      # wind speed
             {'driver': 'GV5', 'value': 0, 'uom': 49},      # gust speed
             {'driver': 'GV6', 'value': 0, 'uom': 82},      # rain
@@ -443,5 +445,6 @@ class Controller(polyinterface.Controller):
             {'driver': 'GV14', 'value': 0, 'uom': 22},     # cloud conditions
             {'driver': 'DISTANC', 'value': 0, 'uom': 83},  # visibility
             {'driver': 'UV', 'value': 0, 'uom': 71},       # UV index
+            {'driver': 'GV18', 'value': 0, 'uom': 22},     # chance of rain
             ]
 
