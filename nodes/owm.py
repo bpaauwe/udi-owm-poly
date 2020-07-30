@@ -390,6 +390,8 @@ class Controller(polyinterface.Controller):
             if int(self.params.get('Forecast Days')) > 8:
                 self.addNotice('Number of days of forecast data is limited to 8 days', 'forecast')
                 self.params.set('Forecast Days', 8)
+            if 'lat' not in self.params.get('Location'):
+                self.addNotice('Location must be latitude and longitude. Other methods are no longer supported.' 'location')
         else:
             LOGGER.debug('Configuration required.')
             LOGGER.debug('APIkey = ' + self.params.get('APIkey'))
