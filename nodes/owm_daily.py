@@ -27,6 +27,7 @@ class DailyNode(polyinterface.Node):
         self.drivers.append({'driver': 'GV0', 'value': 0, 'uom': self.uom['GV0']})
         self.drivers.append({'driver': 'GV1', 'value': 0, 'uom': self.uom['GV1']})
         self.drivers.append({'driver': 'GV2', 'value': 0, 'uom': self.uom['GV2']})
+        self.drivers.append({'driver': 'DEWPT', 'value': 0, 'uom': self.uom['DEWPT']})
         self.drivers.append({'driver': 'CLIHUM', 'value': 0, 'uom': self.uom['CLIHUM']})
         self.drivers.append({'driver': 'BARPRES', 'value': 0, 'uom': self.uom['BARPRES']})
         self.drivers.append({'driver': 'GV13', 'value': 0, 'uom': self.uom['GV13']})
@@ -46,6 +47,7 @@ class DailyNode(polyinterface.Node):
             'GV0': 4,
             'GV1': 4,
             'GV2': 4,
+            'DEWPT': 4,
             'CLIHUM': 22,
             'BARPRES': 118,
             'GV13': 25,
@@ -76,6 +78,7 @@ class DailyNode(polyinterface.Node):
             humidity = (forecast['Hmin'] + forecast['Hmax']) / 2
             self.update_driver('CLIHUM', round(humidity, 0), f)
             self.update_driver('BARPRES', round(forecast['pressure'], 1), f)
+            self.update_driver('DEWPT', round(forecast['dewpoint'], 1), f)
             self.update_driver('GV0', round(forecast['temp_max'], 1), f)
             self.update_driver('GV1', round(forecast['temp_min'], 1), f)
             self.update_driver('GV2', round(forecast['feelslike'], 1), f)

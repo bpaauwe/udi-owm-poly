@@ -273,6 +273,8 @@ class Controller(polyinterface.Controller):
                     fcast[day]['pop'] = forecast['pop']
                 if 'feels_like' in forecast:
                     fcast[day]['feelslike'] = forecast['feels_like']['day']
+                if 'dew_point' in forecast:
+                    fcast[day]['dewpoint'] = forecast['dew_point']
                 fcast[day]['rain'] = rain
                 fcast[day]['snow'] = snow
                 fcast[day]['count'] = 1
@@ -436,6 +438,7 @@ class Controller(polyinterface.Controller):
             {'driver': 'CLIHUM', 'value': 0, 'uom': 22},   # humidity
             {'driver': 'BARPRES', 'value': 0, 'uom': 118}, # pressure
             {'driver': 'WINDDIR', 'value': 0, 'uom': 76},  # direction
+            {'driver': 'DEWPT', 'value': 0, 'uom': 4},     # dew point
             {'driver': 'GV2', 'value': 0, 'uom': 4},       # feels like
             {'driver': 'GV4', 'value': 0, 'uom': 49},      # wind speed
             {'driver': 'GV5', 'value': 0, 'uom': 49},      # gust speed
