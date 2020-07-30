@@ -439,8 +439,8 @@ class Controller(polyinterface.Controller):
             {'driver': 'GV2', 'value': 0, 'uom': 4},       # feels like
             {'driver': 'GV4', 'value': 0, 'uom': 49},      # wind speed
             {'driver': 'GV5', 'value': 0, 'uom': 49},      # gust speed
-            {'driver': 'GV6', 'value': 0, 'uom': 82},      # rain
-            {'driver': 'GV7', 'value': 0, 'uom': 82},      # snow
+            {'driver': 'GV6', 'value': 0, 'uom': 46},      # rain
+            {'driver': 'GV7', 'value': 0, 'uom': 46},      # snow
             {'driver': 'GV13', 'value': 0, 'uom': 25},     # climate conditions
             {'driver': 'GV14', 'value': 0, 'uom': 22},     # cloud conditions
             {'driver': 'DISTANC', 'value': 0, 'uom': 83},  # visibility

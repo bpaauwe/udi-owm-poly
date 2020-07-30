@@ -30,10 +30,10 @@ def get_uom(units):
             'GV3': 4,       # ??feels like
             'GV4': 49,      # wind speed
             'GV5': 49,      # wind gusts
-            'GV6': 82,      # rain
-            'GV7': 82,      # snow
-            'GV8': 82,      # snow depth
-            'GV9': 56,      # moon phase
+            'GV6': 48,      # rain rate
+            'GV7': 48,      # snow rate
+            'GV8': 82,      # rain accumulation
+            'GV9': 82,      # snow accumulation
             'GV10': 56,     # ozone
             'GV11': 25,     # climate coverage
             'GV12': 25,     # climate intensity
@@ -62,10 +62,10 @@ def get_uom(units):
             'GV3': 4,       # ??feels like
             'GV4': 48,      # wind speed
             'GV5': 48,      # wind gusts
-            'GV6': 105,     # rain
-            'GV7': 82,      # snow
-            'GV8': 82,      # snow depth
-            'GV9': 56,      # moon phase
+            'GV6': 24,      # rain rate
+            'GV7': 24,      # snow rate
+            'GV8': 105,     # rain accumulation
+            'GV9': 105,     # snow accumulation
             'GV10': 56,     # ozone
             'GV11': 25,     # climate coverage
             'GV12': 25,     # climate intensity
@@ -94,10 +94,10 @@ def get_uom(units):
             'GV3': 17,      # ??feels like
             'GV4': 48,      # wind speed
             'GV5': 48,      # wind gusts
-            'GV6': 105,     # rain
-            'GV7': 105,     # snow
-            'GV8': 105,     # snow depth
-            'GV9': 56,      # moon phase
+            'GV6': 24,      # rain rate
+            'GV7': 24,      # snow rate
+            'GV8': 105,     # rain accumulation
+            'GV9': 105,     # snow accumulation
             'GV10': 56,     # ozone
             'GV11': 25,     # climate coverage
             'GV12': 25,     # climate intensity

@@ -31,8 +31,8 @@ class DailyNode(polyinterface.Node):
         self.drivers.append({'driver': 'BARPRES', 'value': 0, 'uom': self.uom['BARPRES']})
         self.drivers.append({'driver': 'GV13', 'value': 0, 'uom': self.uom['GV13']})
         self.drivers.append({'driver': 'GV14', 'value': 0, 'uom': self.uom['GV14']})
-        self.drivers.append({'driver': 'GV6', 'value': 0, 'uom': self.uom['GV6']})
-        self.drivers.append({'driver': 'GV7', 'value': 0, 'uom': self.uom['GV7']})
+        self.drivers.append({'driver': 'GV8', 'value': 0, 'uom': self.uom['GV8']})
+        self.drivers.append({'driver': 'GV9', 'value': 0, 'uom': self.uom['GV9']})
         self.drivers.append({'driver': 'GV4', 'value': 0, 'uom': self.uom['GV4']})
         self.drivers.append({'driver': 'UV', 'value': 0, 'uom': self.uom['UV']})
         self.drivers.append({'driver': 'GV18', 'value': 0, 'uom': self.uom['GV18']})
@@ -53,8 +53,8 @@ class DailyNode(polyinterface.Node):
             'GV4': 49,
             'UV': 71,
             'GV20': 107,
-            'GV6': 82,
-            'GV7': 82,
+            'GV8': 82,
+            'GV9': 82,
             'GV18': 22,
             }
 
