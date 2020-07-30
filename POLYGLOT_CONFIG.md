@@ -3,17 +3,15 @@
 The OpenWeatherMap node server has the following user configuration
 parameters:
 
-- APIkey   : Your API ID, needed to authorize connection to the OpenWeatherMap API.
+- APIkey       : Your API ID, needed to authorize connection to the OpenWeatherMap API.
 
-- Units    : 'metric' or 'imperial' request data in this units format.
+- Units        : 'metric' or 'imperial' request data in this units format.
 
-- Location : 
-    - by zip code (zip=xxxxxxx[,country code])
-    - by city name (q=city name[,country code])
-    - by city id (id=city id)
-    - by coordinates (lat=xx&lon=xxx)
+- Location     : geo coordinates (lat=xx&lon=xxx) ex: lat=37.75&lon=-121.62
 
-- Elevation : Height above sea level, in meters, for the location specified above. 
+- Forecast Days: The number of days of forecast data to track (0 - 7)
 
-- Plant Type : Crop coefficent for evapotranspiration calculation. Default is 0.23
+- Elevation     : Height above sea level, in meters, for the location specified above. 
+
+- Plant Type     : Crop coefficent for evapotranspiration calculation. Default is 0.23
 
