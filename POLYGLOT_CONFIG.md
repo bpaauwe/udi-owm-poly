@@ -9,7 +9,7 @@ parameters:
 
 - Location     : geo coordinates (lat=xx&lon=xxx) ex: lat=37.75&lon=-121.62
 
-- Forecast Days: The number of days of forecast data to track (0 - 7)
+- Forecast Days: The number of days of forecast data to track (0 - 8)
 
 - Elevation     : Height above sea level, in meters, for the location specified above. 
 

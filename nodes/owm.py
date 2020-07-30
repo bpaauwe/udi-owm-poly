@@ -346,9 +346,9 @@ class Controller(polyinterface.Controller):
 
         # Create any additional nodes here
         num_days = int(self.params.get('Forecast Days'))
-        if num_days < 7:
+        if num_days < 8:
             # delete any extra days
-            for day in range(num_days, 7):
+            for day in range(num_days, 8):
                 address = 'forecast_' + str(day)
                 try:
                     self.delNode(address)
@@ -387,9 +387,9 @@ class Controller(polyinterface.Controller):
         if self.params.get_from_polyglot(self):
             LOGGER.debug('All required parameters are set!')
             self.configured = True
-            if int(self.params.get('Forecast Days')) > 7:
-                self.addNotice('Number of days of forecast data is limited to 7 days', 'forecast')
-                self.params.set('Forecast Days', 7)
+            if int(self.params.get('Forecast Days')) > 8:
+                self.addNotice('Number of days of forecast data is limited to 8 days', 'forecast')
+                self.params.set('Forecast Days', 8)
         else:
             LOGGER.debug('Configuration required.')
             LOGGER.debug('APIkey = ' + self.params.get('APIkey'))
