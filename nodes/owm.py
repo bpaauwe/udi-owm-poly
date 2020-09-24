@@ -44,7 +44,7 @@ class Controller(polyinterface.Controller):
             },
             {
             'name': 'Location',
-            'default': 'set me',
+            'default': 'Enter latitude/longitude (ex: lat=39.673641&lon=-122.016557)',
             'isRequired': True,
             'notice': 'OpenWeatherMap location must be set',
             },
