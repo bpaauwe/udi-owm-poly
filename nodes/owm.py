@@ -167,7 +167,8 @@ class Controller(polyinterface.Controller):
         if 'feels_like' in jdata:
             self.update_driver('GV2', jdata['feels_like'], force)
         if 'pop' in jdata:
-            self.update_driver('GV18', jdata['pop'], force)
+            # this is reported as 0-1 so multiply by 100
+            self.update_driver('GV18', float(jdata['pop']) * 100, force)
         if 'uvi' in jdata:
             self.update_driver('UV', jdata['uvi'], force)
         if 'wind_speed' in jdata:
@@ -270,7 +271,7 @@ class Controller(polyinterface.Controller):
                 if 'visibility' in forecast:
                     fcast[day]['visibility'] = forecast['visibility']
                 if 'pop' in forecast:
-                    fcast[day]['pop'] = forecast['pop']
+                    fcast[day]['pop'] = float(forecast['pop']) * 100
                 if 'feels_like' in forecast:
                     fcast[day]['feelslike'] = forecast['feels_like']['day']
                 if 'dew_point' in forecast:
