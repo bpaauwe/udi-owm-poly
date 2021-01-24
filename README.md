@@ -102,6 +102,10 @@ The nodeserver keeps track of the version number and when a profile rebuild is n
 
 # Release Notes
 
+- 3.0.1 01/24/2021
+   - Convert probablity of precipitation to percent chance of preciptitation
+   - Add notice if location doesn't look like lat/long
+   - Fix location example
 - 3.0.0 07/30/2020
    - Replaced API calls with new OpenWeatherMap OnCall API call.
      This provides better daily forecast data.
