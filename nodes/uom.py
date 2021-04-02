@@ -30,8 +30,8 @@ def get_uom(units):
             'GV3': 4,       # ??feels like
             'GV4': 49,      # wind speed
             'GV5': 49,      # wind gusts
-            'GV6': 48,      # rain rate
-            'GV7': 48,      # snow rate
+            'GV6': 46,      # rain rate
+            'GV7': 46,      # snow rate
             'GV8': 82,      # rain accumulation
             'GV9': 82,      # snow accumulation
             'GV10': 56,     # ozone

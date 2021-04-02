@@ -58,6 +58,8 @@ class DailyNode(polyinterface.Node):
             'GV8': 82,
             'GV9': 82,
             'GV18': 22,
+            'GV6': 46,
+            'GV7': 46,
             }
 
     def set_driver_uom(self, units):
