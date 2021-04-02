@@ -240,8 +240,8 @@ class Controller(polyinterface.Controller):
                 if 'snow' in forecast:
                     snow = jdata['rain']  # in mm only?
             except Exception as e:
-                LOGGER.error('Failed to parse forecasted rain/snow data.')
-                LOGGER.error(str(e))
+                LOGGER.warning('Failed to parse forecasted rain/snow data.')
+                LOGGER.warning(str(e))
 
             fcast.append({})
             try: 
