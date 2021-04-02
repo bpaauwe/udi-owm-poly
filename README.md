@@ -102,6 +102,9 @@ The nodeserver keeps track of the version number and when a profile rebuild is n
 
 # Release Notes
 
+- 3.0.2 04/02/2021
+   - Fix si UOM for rain/snow rate.
+   - Remove some dead code.
 - 3.0.1 01/24/2021
    - Convert probablity of precipitation to percent chance of preciptitation
    - Add notice if location doesn't look like lat/long
